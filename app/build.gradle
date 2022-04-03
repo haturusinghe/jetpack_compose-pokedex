@@ -87,7 +87,8 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:1.0.0"
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
-
+    // Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
 
     implementation "com.squareup.okhttp3:okhttp:4.9.3"
