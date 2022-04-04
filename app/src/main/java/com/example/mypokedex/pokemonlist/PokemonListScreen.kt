@@ -76,7 +76,10 @@ fun PokemonListScreen(
 fun SearchBar(
     modifier : Modifier = Modifier,
     hint : String = "",
-    onSearch : (String) -> Unit = {}
+    viewModel : PokemonListViewModel = hiltViewModel(),
+    onSearch : (String) -> Unit = {
+
+    }
 ) {
     var text by remember {
         mutableStateOf("")
@@ -91,7 +94,7 @@ fun SearchBar(
             value = text,
             onValueChange = {
                 text = it
-                onSearch(it)
+                viewModel.searchPokemonList(it)
             },
             maxLines = 1,
             singleLine = true,
@@ -102,7 +105,7 @@ fun SearchBar(
                 .background(color = Color.White, CircleShape)
                 .padding(horizontal = 20.dp, vertical = 12.dp)
                 .onFocusChanged {
-                    isHintDisplayed = !it.isFocused
+                    isHintDisplayed = !it.isFocused && text.isEmpty()
                 }
         )
         if (isHintDisplayed) {
@@ -132,6 +135,9 @@ fun PokemonList(
     val endReached by remember {
         viewModel.endReached
     }
+    val isSearching by remember{
+        viewModel.isSearching
+    }
 
     LazyColumn(contentPadding = PaddingValues(16.dp)) {
         val itemCount = if (pokemonList.size % 2 == 0) {
@@ -140,7 +146,7 @@ fun PokemonList(
             pokemonList.size / 2 + 1
         }
         items(itemCount) {
-            if (it >= itemCount - 1 && !endReached && !isLoading) {
+            if (it >= itemCount - 1 && !endReached && !isLoading && !isSearching) {
                 viewModel.loadPokemonPaginated()
             }
             PokedexRow(rowIndex = it, entries = pokemonList, navController = navController)
